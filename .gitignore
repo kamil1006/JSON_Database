@@ -1,0 +1,4 @@
+# Project exclude paths
+/.gradle/
+/Problems/Printing each word in a new line/out/
+/Problems/Printing each word in a new line/out/production/classes/

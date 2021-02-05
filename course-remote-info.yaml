@@ -3,7 +3,7 @@ hyperskill_project:
   ide_files: https://stepik.org/media/attachments/lesson/210138/additional_files.json
   is_template_based: false
   use_ide: true
-update_date: Tue, 26 Jan 2021 13:45:42 UTC
+update_date: Fri, 05 Feb 2021 15:31:24 UTC
 stages:
 - id: 348
   step: 5490
@@ -19,7 +19,7 @@ stages:
   is_completed: true
 - id: 352
   step: 5494
-  is_completed: false
+  is_completed: true
 - id: 353
   step: 5495
   is_completed: false
@@ -27,14 +27,12 @@ topics:
   0:
   - title: Units of information
     theory_id: 6865
-  - title: Introduction to OOP
-    theory_id: 3614
+  - title: Introduction to operating systems
+    theory_id: 9704
   - title: IDE
     theory_id: 10996
   - title: What are streams
     theory_id: 5533
-  - title: Introduction to operating systems
-    theory_id: 9704
   - title: Command line overview
     theory_id: 8977
   - title: Parameters and options
@@ -65,6 +63,8 @@ topics:
     theory_id: 9723
   - title: Try with resources
     theory_id: 9734
+  - title: Introduction to OOP
+    theory_id: 3614
   - title: Introduction to Java
     theory_id: 3500
   - title: Basic literals
@@ -75,10 +75,6 @@ topics:
     theory_id: 3749
   - title: Types and variables
     theory_id: 3518
-  - title: Sizes and ranges
-    theory_id: 3532
-  - title: Type casting
-    theory_id: 3510
   - title: Comments
     theory_id: 3520
   - title: Naming variables
@@ -109,6 +105,10 @@ topics:
     theory_id: 3507
   - title: Switch statement
     theory_id: 3504
+  - title: Sizes and ranges
+    theory_id: 3532
+  - title: Type casting
+    theory_id: 3510
   - title: Calling a method
     theory_id: 10973
   - title: Declaring a method
@@ -150,12 +150,6 @@ topics:
   - title: Inheritance
     theory_id: 3583
   1:
-  - title: Synchronous, asynchronous, parallel
-    theory_id: 9332
-  - title: Concurrency and parallelism
-    theory_id: 9341
-  - title: Processes and threads
-    theory_id: 9420
   - title: Output streams
     theory_id: 8837
   - title: Threads as objects
@@ -168,6 +162,12 @@ topics:
     theory_id: 4882
   - title: Sockets
     theory_id: 4942
+  - title: Synchronous, asynchronous, parallel
+    theory_id: 9332
+  - title: Concurrency and parallelism
+    theory_id: 9341
+  - title: Processes and threads
+    theory_id: 9420
   - title: Overloading
     theory_id: 3525
   - title: Final variables
@@ -226,8 +226,6 @@ topics:
   3:
   - title: Immutability
     theory_id: 7929
-  - title: JSON
-    theory_id: 6854
   - title: 'Hashing: overview'
     theory_id: 9831
   - title: Hash table
@@ -246,6 +244,8 @@ topics:
     theory_id: 3575
   - title: Map
     theory_id: 3558
+  - title: JSON
+    theory_id: 6854
   - title: Iterating over arrays
     theory_id: 3602
   - title: The Object class

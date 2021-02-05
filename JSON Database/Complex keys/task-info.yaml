@@ -167,9 +167,10 @@ files:
     \  )\n                        .anyOtherValues()\n                    )\n     \
     \       );\n        checkIfThreadWasCreated();\n\n\n        client = getClient();\n\
     \        client.start(\"-t\", \"exit\");\n\n        return CheckResult.correct();\n\
-    \    }\n\n    private static TestedProgram getClient() {\n        return new TestedProgram(client.Main.class);\n\
-    \    }\n\n    private static TestedProgram getServer() {\n        return new TestedProgram(server.Main.class);\n\
-    \    }\n\n    private static int getThreadCount() {\n        return (int) ManagementFactory.getThreadMXBean().getTotalStartedThreadCount();\n\
+    \    }\n\n    private static TestedProgram getClient() {\n        return new TestedProgram(\"\
+    client\");\n    }\n\n    private static TestedProgram getServer() {\n        return\
+    \ new TestedProgram(\"server\");\n    }\n\n    private static int getThreadCount()\
+    \ {\n        return (int) ManagementFactory.getThreadMXBean().getTotalStartedThreadCount();\n\
     \    }\n\n    private static void checkIfThreadWasCreated() {\n\n        int total\
     \ = getThreadCount();\n\n        /*8 threads: 1 server thread and 7 client threads\
     \ created during the test.\n         If the server doesn't handle clients in a\
@@ -296,16 +297,20 @@ files:
     public class MainTest extends TestCase {
 
         public void testMain() {
-            client.Main.main("-t" ,"get", "-k", "1");
-            client.Main.main("-t" ,"set", "-k", "1","-v"," hello wordl!");
-            client.Main.main("-t" ,"get", "-k", "1");
-            client.Main.main("-t" ,"delete", "-k", "1");
-            client.Main.main("-t" ,"get", "-k", "1");
-            client.Main.main("-t" ,"delete", "-k", "1");
-            client.Main.main("-t" ,"set", "-k", "tekst","-v"," hello wordl!");
 
+         client.Main.main("-t" ,"get", "-k", "1");
+           client.Main.main("-t" ,"set", "-k", "1","-v"," hello worooodl!");
+            client.Main.main("-t" ,"get", "-k", "1");
+        //    client.Main.main("-t" ,"delete", "-k", "1");
+            client.Main.main("-t" ,"get", "-k", "1");
+     //       client.Main.main("-t" ,"delete", "-k", "1");
+
+               client.Main.main("-t" ,"set", "-k", "tekst","-v"," hello wordqql!");
+            client.Main.main("-t" ,"get", "-k", "tekst");
             //client.Main.main("-t" ,"exit");
-
+            //client.Main.main("-t" ,"exit");
+            client.Main.main("-in" ,"testSet.json");
+            client.Main.main("-in" ,"testGet.json");
         }
 
 
@@ -313,6 +318,69 @@ files:
 
     }
   learner_created: false
+- name: testSet.json
+  visible: true
+  text: '{"type":"set","key":"name","value":"Kate"}'
+  learner_created: false
+- name: testGet.json
+  visible: true
+  text: '{"type":"get","key":"name"}'
+  learner_created: false
+- name: testDelete.json
+  visible: true
+  text: '{"type":"delete","key":"name"}'
+  learner_created: false
+- name: src/client/data/testGet.json
+  visible: true
+  text: '{"type":"get","key":"name"}'
+  learner_created: true
+- name: src/client/data/testSet.json
+  visible: true
+  text: '{"type":"set","key":"name","value":"Kate"}'
+  learner_created: true
+- name: db.json
+  visible: true
+  learner_created: true
+- name: src/client/data/testDelete.json
+  visible: true
+  text: '{"type":"delete","key":"name"}'
+  learner_created: true
+- name: src/server/data/db.json
+  visible: true
+  text: '{"name":"Kate","text":"Some text here"}'
+  learner_created: true
+- name: src/server/data/data.json
+  visible: true
+  learner_created: true
+- name: setFile.json
+  visible: true
+  learner_created: true
+- name: src/client/data/setFile.json
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/65/stages/353/implement#comment
-status: Unchecked
+status: Failed
+feedback:
+  message: |-
+    Wrong answer in test #3
+
+    Can&#39;t find request JSON object in the output.
+    It should contain &#39;type&#39; key
+
+    Please find below the output of your program during this failed test.
+
+    ---
+
+    Arguments for Main: -t set -k 1 -v &quot;Hello world!&quot;
+    Arguments for Main: -in setFile.json
+
+    Server started!
+    Client started!
+    Sent: {&quot;type&quot;:&quot;set&quot;,&quot;value&quot;:&quot;Hello world!&quot;,&quot;key&quot;:&quot;1&quot;}
+    Received: {&quot;response&quot;:&quot;OK&quot;}
+    Client started!
+    brak pliku?
+    Sent: {}
+    Received: {&quot;reason&quot;:&quot;No such key&quot;,&quot;response&quot;:&quot;ERROR&quot;}
+  time: Fri, 05 Feb 2021 16:10:58 UTC
 record: -1

@@ -1,13 +1,15 @@
 package server;
 
 import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
+
+
+
 
 //#################################################################################################
 //#################################################################################################
@@ -294,6 +296,8 @@ protected static class StringWalidator {
         private Map<String, String> mapa;//= new HashMap<>();
         private int rozmiar;
         private int rozmiarMapy;
+
+        private String nazwaPliku;
         //-------------------------
 
         public WpisyOperacje(int n) {
@@ -305,6 +309,19 @@ protected static class StringWalidator {
             }
             rozmiarMapy=0;
             mapa= new HashMap<>();
+            //****
+            nazwaPliku="/media/kamil/Nowy/dokumenty/IdeaPRoject2020 12/JSON Database/JSON Database/task/src/server/data/db.json";
+            //nazwaPliku="server/data/db.json";
+           try {
+               OutputStream outputStream = new FileOutputStream(nazwaPliku, false);
+              // System.out.println("utworzono plik");
+           } catch (FileNotFoundException e) {
+               e.printStackTrace();
+           }
+
+
+            //****
+
         }
         //-------------------------
 
@@ -319,6 +336,7 @@ protected static class StringWalidator {
         //-------------------------
         public String getMapa(String n) {
 
+            //getPlikJSON();
             String s = mapa.getOrDefault(n,"0");
             if(s.equals("0"))
             return String.valueOf(polecenia.ERROR);
@@ -346,6 +364,8 @@ protected static class StringWalidator {
             if (rozmiarMapy <= rozmiar) {
                 mapa.put(n,tekst);
                 rozmiarMapy++;
+                this.zapiszPlikJSON();
+
                 return String.valueOf(polecenia.OK);
             } else
                 return String.valueOf(polecenia.ERROR);
@@ -384,6 +404,47 @@ protected static class StringWalidator {
 
         }
         //-------------------------
+         public void getPlikJSON(){
+             String path = nazwaPliku;//"absolute path to your file";
+             try {
+                 BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
+                 Gson gson = new Gson();
+                 HashMap<String, String> json = gson.fromJson(bufferedReader, HashMap.class);
+                 if(json!=null)
+
+                 this.mapa=json;
+
+             }catch (Exception e){
+
+             }
+
+
+
+
+         }
+
+        //-------------------------
+        public void zapiszPlikJSON(){
+            Gson gson = new Gson();
+            try {
+               FileWriter pliczek = new FileWriter(nazwaPliku, false);
+                pliczek.write(gson.toJson(mapa));
+               // System.out.println("zapisujemy plik");
+                pliczek.close();
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        //-------------------------
+
+
+
 
     }
 

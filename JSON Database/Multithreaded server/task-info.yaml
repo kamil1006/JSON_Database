@@ -509,11 +509,11 @@ files:
         }
 
         private static TestedProgram getClient() {
-            return new TestedProgram(client.Main.class);
+            return new TestedProgram("client");
         }
 
         private static TestedProgram getServer() {
-            return new TestedProgram(server.Main.class);
+            return new TestedProgram("server");
         }
 
         private static int getThreadCount() {
@@ -596,14 +596,16 @@ files:
     public class MainTest extends TestCase {
 
         public void testMain() {
-            client.Main.main("-t" ,"get", "-k", "1");
-            client.Main.main("-t" ,"set", "-k", "1","-v"," hello wordl!");
+    /*
+         client.Main.main("-t" ,"get", "-k", "1");
+           client.Main.main("-t" ,"set", "-k", "1","-v"," hello wordl!");
             client.Main.main("-t" ,"get", "-k", "1");
             client.Main.main("-t" ,"delete", "-k", "1");
             client.Main.main("-t" ,"get", "-k", "1");
             client.Main.main("-t" ,"delete", "-k", "1");
-            client.Main.main("-t" ,"set", "-k", "tekst","-v"," hello wordl!");
-
+    */
+               client.Main.main("-t" ,"set", "-k", "tekst","-v"," hello wordl!");
+            client.Main.main("-t" ,"get", "-k", "tekst");
             //client.Main.main("-t" ,"exit");
 
         }
@@ -613,6 +615,33 @@ files:
 
     }
   learner_created: false
+- name: testSet.json
+  visible: true
+  learner_created: true
+- name: db.json
+  visible: true
+  learner_created: true
+- name: src/server/data/db.json
+  visible: true
+  learner_created: true
+- name: src/client/data/testDelete.json
+  visible: true
+  learner_created: true
+- name: src/client/data/testGet.json
+  visible: true
+  learner_created: true
+- name: src/client/data/testSet.json
+  visible: true
+  learner_created: true
+- name: testGet.json
+  visible: true
+  learner_created: true
+- name: testDelete.json
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/65/stages/352/implement#comment
-status: Unchecked
-record: -1
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Tue, 02 Feb 2021 18:35:47 UTC
+record: 5

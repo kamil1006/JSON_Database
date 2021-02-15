@@ -355,7 +355,22 @@ files:
 - name: setFile.json
   visible: true
   learner_created: true
-- name: src/client/data/setFile.json
+- name: setFile1.json
+  visible: true
+  learner_created: true
+- name: src/server/data/db2.json
+  visible: true
+  learner_created: true
+- name: setFile2.json
+  visible: true
+  learner_created: true
+- name: getFile3.json
+  visible: true
+  learner_created: true
+- name: getFile4.json
+  visible: true
+  learner_created: true
+- name: getFile5.json
   visible: true
   learner_created: true
 feedback_link: https://hyperskill.org/projects/65/stages/353/implement#comment
@@ -372,15 +387,10 @@ feedback:
     ---
 
     Arguments for Main: -t set -k 1 -v &quot;Hello world!&quot;
-    Arguments for Main: -in setFile.json
 
     Server started!
     Client started!
-    Sent: {&quot;type&quot;:&quot;set&quot;,&quot;value&quot;:&quot;Hello world!&quot;,&quot;key&quot;:&quot;1&quot;}
+    Sent: set 1 Hello world!
     Received: {&quot;response&quot;:&quot;OK&quot;}
-    Client started!
-    brak pliku?
-    Sent: {}
-    Received: {&quot;reason&quot;:&quot;No such key&quot;,&quot;response&quot;:&quot;ERROR&quot;}
-  time: Fri, 05 Feb 2021 16:10:58 UTC
+  time: Sat, 06 Feb 2021 09:33:49 UTC
 record: -1

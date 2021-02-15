@@ -1,24 +1,23 @@
 package client;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
-
 import com.beust.jcommander.IParameterValidator;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-
-
 import com.beust.jcommander.ParameterException;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 class MojValidator implements IParameterValidator {
 
@@ -93,9 +92,10 @@ public class Main {
 
 
         Gson gson = new Gson();
-        Map<String, String> jsonWiadomosc = new HashMap<>();
-
-       // JSONObject jsonObject = new JSONObject();
+       // Map<String, String> jsonWiadomosc = new HashMap<>();
+       // Map<String, JsonElement> jsonWiadomosc2 = new HashMap<>();
+        JsonObject jsonWiadomosc = new JsonObject();
+        JsonObject jsonWiadomosc2 = new JsonObject();
 
 
         try (
@@ -111,16 +111,27 @@ public class Main {
             if(main.type!=null)
              {
                 msg= main.type;
-                jsonWiadomosc.put("type", main.type);
+                //jsonWiadomosc.put("type", main.type);
+                 jsonWiadomosc.addProperty("type", main.type);
 
                 if(main.indeks!=(null)){
                     msg=msg+" "+main.indeks;
-                    jsonWiadomosc.put("key", String.valueOf(main.indeks));
+                    //jsonWiadomosc.put("key", String.valueOf(main.indeks));
+                    jsonWiadomosc.addProperty("key", String.valueOf(main.indeks));
+
                     if(main.wiadomosc!=(null)){
                         msg=msg+" "+main.wiadomosc;
-                        jsonWiadomosc.put("value", main.wiadomosc);
+                        //jsonWiadomosc.put("value", main.wiadomosc);
+                        jsonWiadomosc.addProperty("value", main.wiadomosc);
+
                     }
                 }
+
+                 output.writeUTF(gson.toJson(jsonWiadomosc));
+                // System.out.println("Sent: "+msg);
+                 //System.out.println("--1--");
+                  System.out.println(gson.toJson(jsonWiadomosc));
+
             }
             else if(main.nazwaPliku!=null){
 
@@ -136,13 +147,27 @@ public class Main {
                         if(sw.polecenie!=null)
                         {
                             msg= sw.polecenie;
-                            jsonWiadomosc.put("type", sw.polecenie);
+                            //jsonWiadomosc.put("type", sw.polecenie);
+                            jsonWiadomosc.addProperty("type", sw.polecenie);
+
+
+
                             if(sw.nr2!=(null)) {
                                 msg = msg + " " + sw.nr2;
-                                jsonWiadomosc.put("key", String.valueOf(sw.nr2));
-                                if(sw.tekst!=(null)&& sw.tekst!="") {
+                               // jsonWiadomosc.put("key", String.valueOf(sw.nr2));
+                                jsonWiadomosc.addProperty("key", String.valueOf((sw.nr2)).replaceAll("\\\"",""));
+                               // jsonWiadomosc.addProperty("key", String.valueOf((sw.nr2)));
+
+                                // if(sw.tekst!=(null)&& sw.tekst!="")
+                                    if(sw.tekst!=(null))
+                                    {
                                     msg = msg + " " + sw.tekst;
-                                    jsonWiadomosc.put("value", sw.tekst);
+                                    //jsonWiadomosc2.put("value", sw.tekst);
+
+                                        String tek=String.valueOf(sw.tekst);
+                                        tek=tek.replace("\\", "\"");
+                                        //System.out.println(tek);
+                                        jsonWiadomosc.addProperty("value", tek);
                                 }
                             }
 
@@ -161,6 +186,12 @@ public class Main {
 
 
 
+
+
+                JsonElement element = JsonParser.parseString(s);
+                JsonObject obj = element.getAsJsonObject(); //
+                output.writeUTF(String.valueOf(obj));
+                System.out.println("Sent: "+ String.valueOf(obj));
             }
 
 
@@ -170,12 +201,25 @@ public class Main {
 
             //output.writeUTF(msg); // sending message to the server
 
-            output.writeUTF(gson.toJson(jsonWiadomosc));
+            //output.writeUTF(gson.toJson(jsonWiadomosc));
+            //System.out.println("--1--");
+           // System.out.println(gson.toJson(jsonWiadomosc));
+           // System.out.println("--2--");
+            //System.out.println(s);
+           // System.out.println("--3--");
+
+            //System.out.println(obj);
+           // System.out.println("--4--");
+           // output.writeUTF(gson.toJson(s));
+
+
 
 
             //System.out.println("Sent: Give me a record # "+msg);
             //System.out.println("Sent: "+msg);
-            System.out.println("Sent: "+gson.toJson(jsonWiadomosc));
+           // System.out.println("Sent: "+ str);
+           // System.out.println("Sent: "+ s);
+
             
             String receivedMsg = input.readUTF(); // response message
 
@@ -199,8 +243,12 @@ class StringWalidator {
     //-------------------------
     String polecenie;
     int nr;
-    String nr2;
-    String tekst;
+    //String nr2;
+    //Gson nr2;
+    JsonElement nr2;
+    //JsonObject nr2;
+    //String tekst;
+    JsonElement tekst;
     boolean prawidlowy;
     int max;
     boolean nieLiczba=false;
@@ -209,9 +257,11 @@ class StringWalidator {
     public StringWalidator() {
         polecenie = "";
         nr = 0;
-        tekst = "";
+       // tekst = "";
+        tekst=null;
         prawidlowy = false;
-        nr2="";
+        //nr2="";//new Gson();
+        nr2=null;
     }
     //-------------------------
     public boolean czyPrawidlowyGSON(String json) {
@@ -239,10 +289,14 @@ class StringWalidator {
                         nr=0;
                         // nieLiczba=true;
                     }
-                    nr2=entry.getValue().getAsString();
+                    //nr2=entry.getValue().getAsString();
+                    nr2=entry.getValue();//.getAsString();
+                   // nr2=entry.getValue().getAsJsonObject();
+                   // nr2.toJson(entry.getValue());
                     break;
                 case "value":
-                    tekst=entry.getValue().getAsString();
+                    //tekst=entry.getValue().getAsString();
+                    tekst=entry.getValue();
                     break;
 
             }
@@ -285,7 +339,11 @@ class StringWalidator {
                         if (tablica[0].equals("get") ) polecenie="get";
                         if (tablica[0].equals("delete") ) polecenie="delete";
                         //nr=k;
-                        nr2=tablica[1];
+                        //nr2=tablica[1];
+                        nr2=JsonParser.parseString(tablica[1]);
+                        //nr2= (JsonObject) JsonParser.parseString(tablica[1]);
+                       // nr2.toJson(tablica[1]);
+
                     }
 
                 } catch (Exception e) {
@@ -306,8 +364,11 @@ class StringWalidator {
                         prawidlowy = true;
                         polecenie="set";
                         //nr=k;
-                        nr2=tablica[1];
-                        tekst = s.substring(3 + 1 + tablica[1].length() + 1);
+                        //nr2=tablica[1];
+                        nr2=JsonParser.parseString(tablica[1]);
+                        //nr2= (JsonObject) JsonParser.parseString(tablica[1]);
+                       // nr2.toJson(tablica[1]);
+                        //tekst = s.substring(3 + 1 + tablica[1].length() + 1);
 
 
 

@@ -1,14 +1,11 @@
 package server;
 
 import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
-
-
 
 
 //#################################################################################################
@@ -18,7 +15,8 @@ public class Main {
     private static final int PORT = 34522;
 
      static boolean czyKoniec=false;
-        static StringWalidator swMain;
+
+        static JsonWalidator jwMain;
 
     static int rozmiar = 1000;
 
@@ -59,377 +57,160 @@ public class Main {
         }
         System.out.println("Koniec pracy.");
 
-        boolean blokada=true;
 
 
-        if(!blokada) {
-            //++++++++++ poczatek blokady ************
-
-            // System.out.println("Hello, world!");
-
-            Scanner scanner = new Scanner(System.in);
-
-            //-------------------------------------------------------------------------------------
-            do {
-                System.out.print("> ");
-                String input = scanner.nextLine();
-                String[] tablica = input.split(" ");
-                switch (tablica[0]) {
-                    case "exit":
-                        cmd = Main.polecenia.exit;
-                        break;
-                    case "get":
-                        cmd = Main.polecenia.get;
-                        break;
-
-                    case "set":
-                        cmd = Main.polecenia.set;
-
-                        break;
-                    case "delete":
-                        cmd = Main.polecenia.delete;
-
-                        break;
-                    default:
-                        cmd = Main.polecenia.ERROR;
-                        break;
-
-
-                }
-                //***************************
-                StringWalidator sw = new StringWalidator();
-                boolean tak = sw.czyPrawidlowy(input);
-                //***************************
-                if (cmd == Main.polecenia.get) {
-                    if (tak) {
-                        int k = Integer.parseInt(tablica[1]);
-                        System.out.println(baza.get(k));
-                    } else System.out.println(polecenia.ERROR);
-
-                }
-                //***************************
-                if (cmd == Main.polecenia.set) {
-                    if (tak) {
-                        String zapisek = input.substring(3 + 1 + tablica[1].length() + 1);
-                        int k = Integer.parseInt(tablica[1]);
-                        System.out.println(baza.setById(k, zapisek));
-
-                    } else System.out.println(polecenia.ERROR);
-
-                }
-
-                //***************************
-                if (cmd == Main.polecenia.delete) {
-                    if (tak) {
-
-                        int k = Integer.parseInt(tablica[1]);
-                        System.out.println(baza.deleteById(k));
-
-                    } else System.out.println(polecenia.ERROR);
-
-                }
-                //***************************
-
-                if (cmd == Main.polecenia.ERROR) {
-                    System.out.println(polecenia.ERROR);
-                }
-                //***************************
-
-            } while (!cmd.equals(polecenia.exit));
-            //-------------------------------------------------------------------------------------
-        //++++++++++ koniec blokady ************
-        }
 
     }
     //%%%%%%%%%%%%%%%%%%%%%%%%%
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%
-
 //#################################################################################################
 //#################################################################################################
-protected static class StringWalidator {
+    protected static class JsonWalidator {
 
-        //-------------------------
+        JsonElement obiektJson;
+        boolean prawidlowyJson;
+
         String polecenie;
-        int nr;
-        String nr2;
-        String tekst;
-        boolean prawidlowy;
-        int max;
-        boolean nieLiczba=false;
-        //-------------------------
+        String klucz;
+        Map.Entry<String, JsonElement> kluczWartosc;
+        Map.Entry<String, JsonElement> valueWartosc;
 
-        public StringWalidator() {
-            polecenie = "";
-            nr = 0;
-            tekst = "";
-            prawidlowy = false;
-            nr2="";
+        boolean czyPolecenie=false;
+        boolean czyGet=false;
+        boolean czySet=false;
+        boolean czyDelete=false;
+        boolean czyExit=false;
+
+
+        boolean czyKlucz=false;
+        boolean czyValue=false;
+
+        public JsonWalidator() {
+            obiektJson=null;
+            prawidlowyJson=false;
+            polecenie="";
+            kluczWartosc=null;
+            valueWartosc=null;
         }
-        //-------------------------
+        //-----------------------------------------------------------------------------
         public boolean czyPrawidlowyGSON(String json) {
 
+            try {
+                JsonElement element = JsonParser.parseString(json);
+                JsonObject obj = element.getAsJsonObject(); //since you know it's a JsonObject
+                Set<Map.Entry<String, JsonElement>> entries = obj.entrySet();//will return membe
+                prawidlowyJson=true;
+                obiektJson=element;
 
-            String tt = "";
-            JsonElement element = JsonParser.parseString(json);
-            JsonObject obj = element.getAsJsonObject(); //since you know it's a JsonObject
-            Set<Map.Entry<String, JsonElement>> entries = obj.entrySet();//will return members of your object
-            //**********
-            for (Map.Entry<String, JsonElement> entry: entries) {
-                //System.out.print(entry.getKey());
-                //System.out.println(" "+ entry.getValue().getAsString());
+                for (Map.Entry<String, JsonElement> entry: entries) {
+                    switch (entry.getKey()){
+                        case "type":
+                            polecenie=entry.getValue().getAsString();
+                            czyPolecenie=true;
+                            switch (polecenie){
+                                case "exit":
+                                    czyExit=true;
+                                    break;
 
-                switch (entry.getKey()){
-                    case "type":
-                        polecenie=entry.getValue().getAsString();
-                        break;
-                    case "key":
-
-                        try {
-                            nr = Integer.parseInt(entry.getValue().getAsString());
-                        }
-                        catch (Exception e){
-                            nr=0;
-                           // nieLiczba=true;
-                        }
-                        nr2=entry.getValue().getAsString();
-                        break;
-                    case "value":
-                        tekst=entry.getValue().getAsString();
-                        break;
-
-                }
-
-            }
-            //**********
-            tt=polecenie+" "+nr2+" "+tekst;
+                                    case "set":
+                                        czySet=true;
+                                        break;
+                                case "get":
+                                    czyGet=true;
+                                    break;
+                                case "delete":
+                                    czyDelete=true;
+                                    break;
+                            }
 
 
 
+                            break;
+                        case "key":
+                            czyKlucz=true;
+                           kluczWartosc=entry;
+                           klucz=entry.getKey();
 
-            return czyPrawidlowy(tt);
-        }
+                            break;
 
-        //-------------------------
-        public boolean czyPrawidlowy(String s) {
-            StringTokenizer st = new StringTokenizer(s);
-            //==================
-            if (st.countTokens() == 1) {
-                String[] tablica = s.split(" ");
-                if (tablica[0].equals("exit")) {
-                    prawidlowy = true;
-                    polecenie="exit";
-                }
+                        case "value":
+                            czyValue=true;
+                            valueWartosc=entry;
 
-            }
-            //==================
-            else if (st.countTokens() == 2) {
-                String[] tablica = s.split(" ");
-                if (tablica[0].equals("get") || tablica[0].equals("delete")) {
-                    try {
+                            break;
 
-                       // int k = Integer.parseInt(tablica[1]);
-                        max = 1000;
 
-                        //if (k > 0 && k <= max)
-                            if (Main.baza.rozmiarMapy <= max)
-                        {
-                            prawidlowy = true;
-                            if (tablica[0].equals("get") ) polecenie="get";
-                            if (tablica[0].equals("delete") ) polecenie="delete";
-                            //nr=k;
-                            nr2=tablica[1];
-                        }
-
-                    } catch (Exception e) {
                     }
 
-                }
-            }
-            //==================
-            else if (st.countTokens() > 2) {
-                String[] tablica = s.split(" ");
-                if (tablica[0].equals("set")) {
-                    try {
-                        //int k = Integer.parseInt(tablica[1]);
-                        max = 1000;
-                        //if (k > 0 && k <= max)
-                            if (Main.baza.rozmiarMapy <= max)
-                            {
-                            prawidlowy = true;
-                            polecenie="set";
-                            //nr=k;
-                                nr2=tablica[1];
-                            tekst = s.substring(3 + 1 + tablica[1].length() + 1);
 
 
-
-
-                        }
-
-                    } catch (Exception e) {
-                    }
 
                 }
 
 
+
             }
-            //==================
+           catch (Exception e){
+                prawidlowyJson=false;
+           }
 
+           return prawidlowyJson;
 
-            return prawidlowy;
         }
-        //-------------------------
+        //-----------------------------------------------------------------------------
 
 
-    public String getPolecenie() {
-        return polecenie;
+
+
+        //-----------------------------------------------------------------------------
+
+
     }
-}
+        //#################################################################################################
+//#################################################################################################
+
 
     //#################################################################################################
 //#################################################################################################
     static class WpisyOperacje {
 
         //-------------------------
-        private Wpis[] wpisy;
-        private Map<String, String> mapa;//= new HashMap<>();
-        private int rozmiar;
-        private int rozmiarMapy;
 
-        private String nazwaPliku;
+
+
+
+        private String nazwaPliku3;
+
+        private JsonElement elementy;
+
+        Map<String, Object> zbior = new HashMap<String, Object>();
+
+
         //-------------------------
-
         public WpisyOperacje(int n) {
-            this.wpisy = new Wpis[n];
-            this.rozmiar = n + 1;
-            for (int i = 0; i < n; i++) {
-                wpisy[i] = new Wpis("");
-
-            }
-            rozmiarMapy=0;
-            mapa= new HashMap<>();
-            //****
-            nazwaPliku="/media/kamil/Nowy/dokumenty/IdeaPRoject2020 12/JSON Database/JSON Database/task/src/server/data/db.json";
-            //nazwaPliku="server/data/db.json";
+          nazwaPliku3="/media/kamil/Nowy/dokumenty/IdeaPRoject2020 12/JSON Database/JSON Database/task/src/server/data/db.json";
            try {
-               OutputStream outputStream = new FileOutputStream(nazwaPliku, false);
+               OutputStream outputStream3 = new FileOutputStream(nazwaPliku3, false);
               // System.out.println("utworzono plik");
            } catch (FileNotFoundException e) {
                e.printStackTrace();
            }
-
-
-            //****
-
         }
         //-------------------------
-
-        public String get(int n) {
-
-            if (n <= rozmiar && wpisy[n - 1].wiersz.length() > 0)
-                return wpisy[n - 1].wiersz;
-            else
-                return String.valueOf(polecenia.ERROR);
-
-        }
-        //-------------------------
-        public String getMapa(String n) {
-
-            //getPlikJSON();
-            String s = mapa.getOrDefault(n,"0");
-            if(s.equals("0"))
-            return String.valueOf(polecenia.ERROR);
-            else
-                return s;
-
-        }
-        //-------------------------
-
-        public void setWpisy(Wpis[] wpisy) {
-            this.wpisy = wpisy;
-        }
-
-        //-------------------------
-        public String setById(int n, String tekst) {
-            if (n <= rozmiar) {
-                this.wpisy[n - 1].setWiersz(tekst);
-                return String.valueOf(polecenia.OK);
-            } else
-                return String.valueOf(polecenia.ERROR);
-        }
-
-        //-------------------------
-        public String setByIdMapa(String n, String tekst) {
-            if (rozmiarMapy <= rozmiar) {
-                mapa.put(n,tekst);
-                rozmiarMapy++;
-                this.zapiszPlikJSON();
-
-                return String.valueOf(polecenia.OK);
-            } else
-                return String.valueOf(polecenia.ERROR);
-        }
 
         //-------------------------
 
 
-        public String deleteById(int n) {
-            if (n <= rozmiar )
-            {
-                if( this.wpisy[n-1].getWiersz()!=""){
-                this.wpisy[n - 1].setWiersz("");
-                return String.valueOf(polecenia.OK);
-                 }else return String.valueOf(polecenia.ERROR);
-            } else
-                return String.valueOf(polecenia.ERROR);
-
-           // return setById(n, tekst);
-
-        }
-        //-------------------------
-        public String deleteByIdMapa(String n) {
-
-                String s = mapa.getOrDefault(n,"0");
-                if (s.equals("0")) {
-                    return String.valueOf(polecenia.ERROR);
-                } else {
-                    mapa.remove(n);
-                    rozmiarMapy--;
-                    return String.valueOf(polecenia.OK);
-                }
 
 
-
-
-        }
-        //-------------------------
-         public void getPlikJSON(){
-             String path = nazwaPliku;//"absolute path to your file";
-             try {
-                 BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
-                 Gson gson = new Gson();
-                 HashMap<String, String> json = gson.fromJson(bufferedReader, HashMap.class);
-                 if(json!=null)
-
-                 this.mapa=json;
-
-             }catch (Exception e){
-
-             }
-
-
-
-
-         }
 
         //-------------------------
         public void zapiszPlikJSON(){
             Gson gson = new Gson();
             try {
-               FileWriter pliczek = new FileWriter(nazwaPliku, false);
-                pliczek.write(gson.toJson(mapa));
-               // System.out.println("zapisujemy plik");
+                FileWriter pliczek = new FileWriter(nazwaPliku3, false);
+                pliczek.write(gson.toJson(zbior));
                 pliczek.close();
 
             } catch (FileNotFoundException e) {
@@ -440,9 +221,262 @@ protected static class StringWalidator {
             }
 
         }
-
         //-------------------------
 
+
+        public void setByIdZbior(JsonElement obiektJson) {
+
+           // JsonArray entrySet = obiektJson.getAsJsonArray();
+
+        boolean wartoscValueTekstowa=true;
+        boolean wartoscKeyTekstowa=true;
+        boolean wartoscValuePRymityw=false;
+            boolean wartoscValueObject=false;
+            boolean wartoscKeyTablica=false;
+
+
+
+            //JsonElement element = JsonParser.parseString(json);
+            JsonObject obj = obiektJson.getAsJsonObject(); //since you know it's a JsonObject
+            Set<Map.Entry<String, JsonElement>> entries = obj.entrySet();//will return members of your object
+            String kluczyk = "";
+            String wartoscTekstowa="";
+            JsonElement je = null;
+            JsonObject jo=null;
+
+            JsonArray tablicaJ = null;
+
+            for (Map.Entry<String, JsonElement> entry: entries) {
+                String key = entry.getKey();
+                JsonElement value = entry.getValue();
+                System.out.println("klucz:"+key+"<-");
+                System.out.println("value "+value);
+
+                if(key.equals("key") && !value.isJsonArray()) {
+                    kluczyk= value.getAsString();
+                    wartoscKeyTekstowa=true;
+
+                }else
+
+                if(key.equals("key") && value.isJsonArray()){
+                   // System.out.println("tablica jsona");
+                     tablicaJ= value.getAsJsonArray();
+                    wartoscKeyTablica=true;
+                   // zapiszDane(tablicaJ,obiektJson);
+
+
+
+
+                }
+
+                if(key.equals("value") && value.isJsonPrimitive()){
+                   je=value;
+                    wartoscValuePRymityw=true;
+
+
+                }
+
+                if(key.equals("value") && value.isJsonObject()){
+                    jo=value.getAsJsonObject();
+                    wartoscValueObject=true;
+
+
+                }
+
+
+                if(key.equals("value") && !value.isJsonArray()) {
+                    wartoscTekstowa=entry.getValue().toString();
+                    System.out.println("wartosc tekstowa:"+wartoscTekstowa);
+                    wartoscValueTekstowa=true;
+
+                }
+
+
+
+                }
+
+            if(wartoscKeyTablica){
+                zapiszDane(tablicaJ,obiektJson,jo);
+
+
+            }
+
+            if (wartoscKeyTekstowa && wartoscValueTekstowa ){
+                // zbior.put(kluczyk,wartoscTekstowa);
+            }
+
+            if (wartoscKeyTekstowa&&wartoscValuePRymityw ){
+                 zbior.put(kluczyk,je);
+                zapiszPlikJSON();
+            }
+            if (wartoscKeyTekstowa&&wartoscValueObject ){
+                zbior.put(kluczyk,jo);
+                zapiszPlikJSON();
+            }
+
+
+                  //  zbior.add(entry)   ;
+
+            }
+
+
+        //--------------------------------------------------------------------
+        public Object getByIdZbior( JsonElement obiektJson) {
+
+            boolean wartoscValueTekstowa=true;
+            boolean wartoscKeyTekstowa=true;
+            boolean wartoscValuePRymityw=false;
+            boolean wartoscValueObject=false;
+
+
+
+            //JsonElement element = JsonParser.parseString(json);
+            JsonObject obj = obiektJson.getAsJsonObject(); //since you know it's a JsonObject
+            Set<Map.Entry<String, JsonElement>> entries = obj.entrySet();//will return members of your object
+            String kluczyk = "";
+            String wartoscTekstowa="";
+            JsonElement je = null;
+            JsonObject jo=null;
+
+
+            for (Map.Entry<String, JsonElement> entry: entries) {
+                String key = entry.getKey();
+                JsonElement value = entry.getValue();
+
+                if(key.equals("key") && !value.isJsonArray()) {
+                    kluczyk= value.getAsString();
+                    wartoscKeyTekstowa=true;
+
+                }else
+                if(key.equals("key") && value.isJsonArray()){
+                    JsonArray tablicaJ= value.getAsJsonArray();
+                        var o=pobierzDane(tablicaJ,obiektJson);
+                    wartoscKeyTekstowa=true;
+                    if(o==null){
+                        return String.valueOf(polecenia.ERROR);
+                    }else{
+                        System.out.println(" odczytano:"+o);
+                        return o;
+                    }
+
+                }
+
+
+
+
+
+            }
+            if(wartoscKeyTekstowa) {
+                var o = zbior.get(kluczyk);
+                if(o==null){
+                    return String.valueOf(polecenia.ERROR);
+                }else{
+                    System.out.println(" odczytano:"+zbior.get(kluczyk));
+                    return zbior.get(kluczyk);
+                }
+
+            }else {
+
+                return  String.valueOf(polecenia.ERROR);
+            }
+
+        }
+
+        private Object pobierzDane(JsonArray tablicaJ, JsonElement obiektJson) {
+
+
+
+
+            int x=tablicaJ.size();
+            JsonObject jo;
+            JsonElement je = null;
+            Map<String, Object> entries = zbior;
+            String key = tablicaJ.get(0).getAsString();
+            jo = (JsonObject) entries.get(key);
+            if(x==1){
+                je=jo;
+            }
+           else
+             {
+                for (int i = 1; i < x; i++) {
+                    je = jo.get(tablicaJ.get(i).getAsString());
+                    System.out.println("wyiterowano" + je);
+                    if (je.isJsonObject()) {
+                        jo = (JsonObject) je;
+                    }
+                    int k = 1;
+                }
+            }
+
+
+          //if(je.isJsonPrimitive()) return je;
+         // else
+
+
+            //return null;
+            return je;
+        }
+        //-------------------------
+
+
+
+        //-------------------------
+        private void zapiszDane(JsonArray tablicaJ, JsonElement obiektJson,JsonObject wartosc) {
+
+            Gson gson=new Gson();
+            String s = gson.toJson(zbior);
+
+            JsonElement element = JsonParser.parseString(s);
+            JsonArray jsonArray = new Gson().fromJson(element, JsonElement.class).getAsJsonArray();
+            JsonArray jsonArray2 = new JsonArray();
+
+            JsonObject obj = element.getAsJsonObject(); //since you know it's a JsonObject
+
+            Iterator iterator = obj.keySet().iterator();
+            String key = null;
+            while (iterator.hasNext()) {
+                key = (String) iterator.next();
+
+
+
+            }
+
+
+
+
+
+
+            int x=tablicaJ.size();
+            JsonObject jo;
+            JsonElement je = null;
+           // Map<String, Object> entries = zbior;
+             key = tablicaJ.get(0).getAsString();
+            jo = (JsonObject) zbior.get(key);
+            je=jo;
+            if(x==1){
+                je=jo;
+                zbior.put(key,wartosc);
+                jo.add(key,wartosc);
+            }
+            else
+            {
+                for (int i = 1; i < x; i++) {
+                    je = jo.get(tablicaJ.get(i).getAsString());
+                    System.out.println("wyiterowano" + je);
+                    if (je.isJsonObject()) {
+                        jo = (JsonObject) je;
+                    }
+                    int k = 1;
+                }
+                jo.add(tablicaJ.get(x-1).getAsString(),wartosc);
+            }
+
+        int cc=1;
+
+        }
+
+
+        //-------------------------
 
 
 
@@ -450,24 +484,7 @@ protected static class StringWalidator {
 
     //#################################################################################################
 //#################################################################################################
-    static class Wpis {
 
-        String wiersz = "";
-
-        public Wpis(String wiersz) {
-            this.wiersz = wiersz;
-        }
-
-        public String getWiersz() {
-            return wiersz;
-        }
-
-        public void setWiersz(String wiersz) {
-            this.wiersz = wiersz;
-        }
-
-
-    }
 //#################################################################################################
 //#################################################################################################
 }
@@ -478,7 +495,7 @@ protected static class StringWalidator {
 class Session extends Thread {
     private final Socket socket;
 
-    String msg;
+    Object msg;
     boolean czyKoniec2=false;
     Main.polecenia cmd;
     public Session(Socket socketForClient,boolean marker) {
@@ -491,123 +508,89 @@ class Session extends Thread {
                 DataInputStream input = new DataInputStream(socket.getInputStream());
                 DataOutputStream output = new DataOutputStream(socket.getOutputStream())
         ) {
-            //for (int i = 0; i < 5; i++)
+
             {
                 msg = input.readUTF();
 
                 Gson gson = new Gson();
                 gson.toJson(msg);
 
-               // System.out.println("Received: "+msg+"");
-                //System.out.println("Received: "+gson);
 
                 //******
-                Main.StringWalidator sw = new Main.StringWalidator();
-                boolean tak=false;
-                        //tak = sw.czyPrawidlowy(msg);
-                        tak = sw.czyPrawidlowyGSON(msg);
 
+                Map<String, Object> jsonWiadomosc = new HashMap<>();
 
-                //System.out.println(tak);
-                //System.out.println(sw.getPolecenie());
+                Main.JsonWalidator jw = new Main.JsonWalidator();
+                boolean jwTak=false;
+                jwTak=jw.czyPrawidlowyGSON(msg.toString());
 
-                gson = new Gson();
-                Map<String, String> jsonWiadomosc = new HashMap<>();
+                Set<Map.Entry<String, JsonElement>> jsonWiadomosc6 = null;
 
-                int k;
-                String k2;
-                if (tak) {
-                    switch (sw.polecenie){
+                if (jwTak) {
+
+                    System.out.println("Received: "+jw.obiektJson);
+                    switch (jw.polecenie) {
                         case "exit":
+
                             cmd = Main.polecenia.exit;
                             czyKoniec2=true;
                             //System.out.println("bjest exit");
                             Main.czyKoniec=true;
+
+
                             jsonWiadomosc.put("response","OK");
+                           output.writeUTF(gson.toJson(jsonWiadomosc));
+                            System.out.println("Sent: "+gson.toJson(jsonWiadomosc));
                             break;
-                        case "get":
-                            Main.swMain=sw;
-                             k = sw.nr;
-                                k2=String.valueOf(sw.nr2);
-                            //msg=(Main.baza.get(k));
-                                msg=Main.baza.getMapa(k2);
-                            if(msg.equals(Main.polecenia.ERROR.toString())){
-                                String ttt="No such key";
-                                jsonWiadomosc.put("response",msg);
 
-                                if(!sw.nieLiczba)
-                                jsonWiadomosc.put("reason",ttt);
-                            }
-                            else {
-                                jsonWiadomosc.put("response","OK");
-                                jsonWiadomosc.put("value",msg);
-                            }
-                            break;
                         case "set":
-
-                            Main.swMain=sw;
-                            // k = sw.nr;
-                            k2=String.valueOf(sw.nr2);
-                           // Main.baza.setById(k, sw.tekst);
-                            Main.baza.setByIdMapa(k2, sw.tekst);
+                            Main.jwMain=jw;
+                            Main.baza.setByIdZbior(jw.obiektJson);
                             msg="OK";
+                           jsonWiadomosc = new HashMap<>();
                             jsonWiadomosc.put("response",msg);
-                               break;
-                        case "delete":
+                            output.writeUTF(gson.toJson(jsonWiadomosc));
+                            System.out.println("Sent: "+gson.toJson(jsonWiadomosc));
 
-                            Main.swMain=sw;
-                            //k = sw.nr;
-                            k2=String.valueOf(sw.nr2);
-                            //msg=Main.baza.deleteById(k);
-                            msg=Main.baza.deleteByIdMapa(k2);
-                            //msg="OK";
+                        break;
+                       case "get":
+                           Main.jwMain=jw;
+                           msg= (Main.baza.getByIdZbior(jw.obiektJson));
+                           if(msg.equals(String.valueOf(Main.polecenia.ERROR))){
+                               msg=Main.polecenia.ERROR.toString();
+                               jsonWiadomosc.put("response",msg);
 
-                            if(msg.equals(Main.polecenia.ERROR.toString())){
-                                String ttt="No such key";
-                                jsonWiadomosc.put("response",msg);
-                                jsonWiadomosc.put("reason",ttt);
-                            }
-                            else {
-                                jsonWiadomosc.put("response","OK");
-                                //jsonWiadomosc.put("value",msg);
-                            }
+
+                           }
+                           else {
+                               jsonWiadomosc.put("response","OK");
+                               jsonWiadomosc.put("value",msg);
+                               output.writeUTF(gson.toJson(jsonWiadomosc));
+                               System.out.println("Sent: "+gson.toJson(jsonWiadomosc));
+                           }
+
+
                             break;
 
-
-
-                        default:
-                          // msg= String.valueOf(Main.polecenia.ERROR);
                     }
                 }
-                else {
-                    if(sw.polecenie.equals("exit")){
-                        jsonWiadomosc.put("response","OK");
-                        czyKoniec2=true;
-
-                        Main.czyKoniec=true;
 
 
 
-                    }else{
-                        msg= String.valueOf(Main.polecenia.ERROR);
-                        jsonWiadomosc.put("response",msg);
-                        if(!sw.nieLiczba)
-                        jsonWiadomosc.put("reason","No such key");
-                    }
 
 
-                }
+
+
 
                 //******
 
 
 
 
-                //output.writeUTF(msg);
+
                 output.writeUTF(gson.toJson(jsonWiadomosc));
-                //System.out.println("Sent: A record # "+msg + "  was sent!");
-                //System.out.println("Sent: "+msg+"");
-               // System.out.println("Sent: "+gson.toJson(jsonWiadomosc));
+
+                System.out.println("Sent end: "+gson.toJson(jsonWiadomosc));
 
             }
             socket.close();
@@ -622,24 +605,7 @@ class Session extends Thread {
 }
 //#################################################################################################
 //#################################################################################################
-class wiadomoscWalidator{
 
-    String wiadomosc;
-    int liczba;
-    boolean czyOk;
-
-    public wiadomoscWalidator(String wiadomosc) {
-        this.wiadomosc = wiadomosc;
-    }
-
-    public boolean waliduj(String s){
-
-
-        return false;
-    }
-
-
-}
 
 
 //#################################################################################################

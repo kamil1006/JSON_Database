@@ -296,7 +296,8 @@ public class Main {
                 }
 
             if(wartoscKeyTablica){
-                zapiszDane(tablicaJ,obiektJson,jo);
+                zapiszDane(tablicaJ,obiektJson,je);
+                zapiszPlikJSON();
 
 
             }
@@ -421,19 +422,40 @@ public class Main {
 
 
         //-------------------------
-        private void zapiszDane(JsonArray tablicaJ, JsonElement obiektJson,JsonObject wartosc) {
+        private void zapiszDane(JsonArray tablicaJ, JsonElement obiektJson,JsonElement wartosc) {
+
+            int x=tablicaJ.size();
 
             Gson gson=new Gson();
             String s = gson.toJson(zbior);
 
             JsonElement element = JsonParser.parseString(s);
-            JsonArray jsonArray = new Gson().fromJson(element, JsonElement.class).getAsJsonArray();
-            JsonArray jsonArray2 = new JsonArray();
+           // JsonArray jsonArray = new Gson().fromJson(element, JsonElement.class).getAsJsonArray();
+          //  JsonArray jsonArray2 = new JsonArray();
 
             JsonObject obj = element.getAsJsonObject(); //since you know it's a JsonObject
+            JsonObject obj2=obj;
+
+
+            for(int k=0;k<x;k++){
+                if(!obj2.isJsonPrimitive())
+                       if(! obj2.get(tablicaJ.get(k).getAsString()).isJsonPrimitive())
+
+                obj2=obj2.getAsJsonObject(tablicaJ.get(k).getAsString());
+            }
+            obj2.remove(tablicaJ.get(x-1).getAsString());
+            obj2.add(tablicaJ.get(x-1).getAsString(),wartosc);
+
+            //zbior;
+            Set<Map.Entry<String, JsonElement>> entries = obj.entrySet();
+           zbior.clear();
+            for (Map.Entry<String, JsonElement> entry: entries) {
+                zbior.put(entry.getKey(),entry.getValue());
+            }
 
             Iterator iterator = obj.keySet().iterator();
             String key = null;
+              /*
             while (iterator.hasNext()) {
                 key = (String) iterator.next();
 
@@ -446,7 +468,7 @@ public class Main {
 
 
 
-            int x=tablicaJ.size();
+
             JsonObject jo;
             JsonElement je = null;
            // Map<String, Object> entries = zbior;
@@ -470,6 +492,8 @@ public class Main {
                 }
                 jo.add(tablicaJ.get(x-1).getAsString(),wartosc);
             }
+
+             */
 
         int cc=1;
 

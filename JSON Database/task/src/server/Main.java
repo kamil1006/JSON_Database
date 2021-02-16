@@ -226,11 +226,9 @@ public class Main {
 
         public void setByIdZbior(JsonElement obiektJson) {
 
-           // JsonArray entrySet = obiektJson.getAsJsonArray();
-
-        boolean wartoscValueTekstowa=true;
-        boolean wartoscKeyTekstowa=true;
-        boolean wartoscValuePRymityw=false;
+            boolean wartoscValueTekstowa=true;
+            boolean wartoscKeyTekstowa=true;
+            boolean wartoscValuePRymityw=false;
             boolean wartoscValueObject=false;
             boolean wartoscKeyTablica=false;
 
@@ -247,66 +245,52 @@ public class Main {
             JsonArray tablicaJ = null;
 
             for (Map.Entry<String, JsonElement> entry: entries) {
-                String key = entry.getKey();
-                JsonElement value = entry.getValue();
-                System.out.println("klucz:"+key+"<-");
-                System.out.println("value "+value);
+                        String key = entry.getKey();
+                        JsonElement value = entry.getValue();
+                       // System.out.println("klucz:"+key+"<-");
+                       // System.out.println("value "+value);
 
-                if(key.equals("key") && !value.isJsonArray()) {
-                    kluczyk= value.getAsString();
-                    wartoscKeyTekstowa=true;
+                        if(key.equals("key") && !value.isJsonArray()) {
+                            kluczyk= value.getAsString();
+                            wartoscKeyTekstowa=true;
 
-                }else
+                        }else
 
-                if(key.equals("key") && value.isJsonArray()){
-                   // System.out.println("tablica jsona");
-                     tablicaJ= value.getAsJsonArray();
-                    wartoscKeyTablica=true;
-                   // zapiszDane(tablicaJ,obiektJson);
+                        if(key.equals("key") && value.isJsonArray()){
+                           // System.out.println("tablica jsona");
+                             tablicaJ= value.getAsJsonArray();
+                            wartoscKeyTablica=true;
+                           // zapiszDane(tablicaJ,obiektJson);
+                        }
 
+                        if(key.equals("value") && value.isJsonPrimitive()){
+                           je=value;
+                            wartoscValuePRymityw=true;
+                        }
 
+                        if(key.equals("value") && value.isJsonObject()){
+                            jo=value.getAsJsonObject();
+                            wartoscValueObject=true;
+                        }
 
-
-                }
-
-                if(key.equals("value") && value.isJsonPrimitive()){
-                   je=value;
-                    wartoscValuePRymityw=true;
-
-
-                }
-
-                if(key.equals("value") && value.isJsonObject()){
-                    jo=value.getAsJsonObject();
-                    wartoscValueObject=true;
-
-
-                }
-
-
-                if(key.equals("value") && !value.isJsonArray()) {
-                    wartoscTekstowa=entry.getValue().toString();
-                    System.out.println("wartosc tekstowa:"+wartoscTekstowa);
-                    wartoscValueTekstowa=true;
-
-                }
-
-
+                        if(key.equals("value") && !value.isJsonArray()) {
+                            wartoscTekstowa=entry.getValue().toString();
+                           // System.out.println("wartosc tekstowa:"+wartoscTekstowa);
+                            wartoscValueTekstowa=true;
+                        }
 
                 }
 
             if(wartoscKeyTablica){
                 zapiszDane(tablicaJ,obiektJson,je);
                 zapiszPlikJSON();
-
-
-            }
+           }
 
             if (wartoscKeyTekstowa && wartoscValueTekstowa ){
                 // zbior.put(kluczyk,wartoscTekstowa);
             }
 
-            if (wartoscKeyTekstowa&&wartoscValuePRymityw ){
+            if (wartoscKeyTekstowa&&wartoscValuePRymityw &&!wartoscKeyTablica){
                  zbior.put(kluczyk,je);
                 zapiszPlikJSON();
             }
@@ -315,30 +299,15 @@ public class Main {
                 zapiszPlikJSON();
             }
 
-
-                  //  zbior.add(entry)   ;
-
-            }
-
-
+          }
         //--------------------------------------------------------------------
         public Object getByIdZbior( JsonElement obiektJson) {
 
-            boolean wartoscValueTekstowa=true;
             boolean wartoscKeyTekstowa=true;
-            boolean wartoscValuePRymityw=false;
-            boolean wartoscValueObject=false;
 
-
-
-            //JsonElement element = JsonParser.parseString(json);
             JsonObject obj = obiektJson.getAsJsonObject(); //since you know it's a JsonObject
             Set<Map.Entry<String, JsonElement>> entries = obj.entrySet();//will return members of your object
             String kluczyk = "";
-            String wartoscTekstowa="";
-            JsonElement je = null;
-            JsonObject jo=null;
-
 
             for (Map.Entry<String, JsonElement> entry: entries) {
                 String key = entry.getKey();
@@ -356,23 +325,17 @@ public class Main {
                     if(o==null){
                         return String.valueOf(polecenia.ERROR);
                     }else{
-                        System.out.println(" odczytano:"+o);
+                     //   System.out.println(" odczytano:"+o);
                         return o;
                     }
-
                 }
-
-
-
-
-
             }
             if(wartoscKeyTekstowa) {
                 var o = zbior.get(kluczyk);
                 if(o==null){
                     return String.valueOf(polecenia.ERROR);
                 }else{
-                    System.out.println(" odczytano:"+zbior.get(kluczyk));
+                   // System.out.println(" odczytano:"+zbior.get(kluczyk));
                     return zbior.get(kluczyk);
                 }
 
@@ -382,11 +345,8 @@ public class Main {
             }
 
         }
-
+        //-------------------------
         private Object pobierzDane(JsonArray tablicaJ, JsonElement obiektJson) {
-
-
-
 
             int x=tablicaJ.size();
             JsonObject jo;
@@ -409,19 +369,10 @@ public class Main {
                 }
             }
 
-
-          //if(je.isJsonPrimitive()) return je;
-         // else
-
-
-            //return null;
             return je;
         }
-        //-------------------------
 
-
-
-        //-------------------------
+      //-------------------------
         private void zapiszDane(JsonArray tablicaJ, JsonElement obiektJson,JsonElement wartosc) {
 
             int x=tablicaJ.size();
@@ -430,12 +381,9 @@ public class Main {
             String s = gson.toJson(zbior);
 
             JsonElement element = JsonParser.parseString(s);
-           // JsonArray jsonArray = new Gson().fromJson(element, JsonElement.class).getAsJsonArray();
-          //  JsonArray jsonArray2 = new JsonArray();
 
             JsonObject obj = element.getAsJsonObject(); //since you know it's a JsonObject
             JsonObject obj2=obj;
-
 
             for(int k=0;k<x;k++){
                 if(!obj2.isJsonPrimitive())
@@ -453,53 +401,119 @@ public class Main {
                 zbior.put(entry.getKey(),entry.getValue());
             }
 
-            Iterator iterator = obj.keySet().iterator();
-            String key = null;
-              /*
-            while (iterator.hasNext()) {
-                key = (String) iterator.next();
-
-
-
-            }
-
-
-
-
-
-
-
-            JsonObject jo;
-            JsonElement je = null;
-           // Map<String, Object> entries = zbior;
-             key = tablicaJ.get(0).getAsString();
-            jo = (JsonObject) zbior.get(key);
-            je=jo;
-            if(x==1){
-                je=jo;
-                zbior.put(key,wartosc);
-                jo.add(key,wartosc);
-            }
-            else
-            {
-                for (int i = 1; i < x; i++) {
-                    je = jo.get(tablicaJ.get(i).getAsString());
-                    System.out.println("wyiterowano" + je);
-                    if (je.isJsonObject()) {
-                        jo = (JsonObject) je;
-                    }
-                    int k = 1;
-                }
-                jo.add(tablicaJ.get(x-1).getAsString(),wartosc);
-            }
-
-             */
-
         int cc=1;
+        }
+        //-------------------------
+        public void deleteByIdZbior(JsonElement obiektJson) {
+            boolean wartoscValueTekstowa=true;
+            boolean wartoscKeyTekstowa=true;
+            boolean wartoscValuePRymityw=false;
+            boolean wartoscValueObject=false;
+            boolean wartoscKeyTablica=false;
+
+
+
+            //JsonElement element = JsonParser.parseString(json);
+            JsonObject obj = obiektJson.getAsJsonObject(); //since you know it's a JsonObject
+            Set<Map.Entry<String, JsonElement>> entries = obj.entrySet();//will return members of your object
+            String kluczyk = "";
+            String wartoscTekstowa="";
+            JsonElement je = null;
+            JsonObject jo=null;
+
+            JsonArray tablicaJ = null;
+
+            for (Map.Entry<String, JsonElement> entry: entries) {
+                String key = entry.getKey();
+                JsonElement value = entry.getValue();
+                // System.out.println("klucz:"+key+"<-");
+                // System.out.println("value "+value);
+
+                if(key.equals("key") && !value.isJsonArray()) {
+                    kluczyk= value.getAsString();
+                    wartoscKeyTekstowa=true;
+
+                }else
+
+                if(key.equals("key") && value.isJsonArray()){
+                    // System.out.println("tablica jsona");
+                    tablicaJ= value.getAsJsonArray();
+                    wartoscKeyTablica=true;
+                    // zapiszDane(tablicaJ,obiektJson);
+                }
+
+                if(key.equals("value") && value.isJsonPrimitive()){
+                   // je=value;
+                   // wartoscValuePRymityw=true;
+                }
+
+                if(key.equals("value") && value.isJsonObject()){
+                  //  jo=value.getAsJsonObject();
+                  //  wartoscValueObject=true;
+                }
+
+                if(key.equals("value") && !value.isJsonArray()) {
+                    wartoscTekstowa=entry.getValue().toString();
+                    // System.out.println("wartosc tekstowa:"+wartoscTekstowa);
+                   // wartoscValueTekstowa=true;
+                }
+
+            }
+
+            if(wartoscKeyTablica){
+                kasujDane(tablicaJ,obiektJson,je);
+                zapiszPlikJSON();
+            }
+
+            if (wartoscKeyTekstowa && wartoscValueTekstowa ){
+                // zbior.put(kluczyk,wartoscTekstowa);
+            }
+
+            if (wartoscKeyTekstowa){//&&wartoscValuePRymityw
+
+               // zbior.put(kluczyk,je);
+                zbior.remove(kluczyk);
+                zapiszPlikJSON();
+            }
+            if (wartoscKeyTekstowa&&wartoscValueObject ){
+               // zbior.put(kluczyk,jo);
+                zbior.remove(kluczyk);
+                zapiszPlikJSON();
+            }
+
 
         }
 
+        private void kasujDane(JsonArray tablicaJ, JsonElement obiektJson, JsonElement wartosc) {
 
+            int x=tablicaJ.size();
+
+            Gson gson=new Gson();
+            String s = gson.toJson(zbior);
+
+            JsonElement element = JsonParser.parseString(s);
+
+            JsonObject obj = element.getAsJsonObject(); //since you know it's a JsonObject
+            JsonObject obj2=obj;
+
+            for(int k=0;k<x;k++){
+                if(!obj2.isJsonPrimitive())
+                    if(! obj2.get(tablicaJ.get(k).getAsString()).isJsonPrimitive())
+
+                        obj2=obj2.getAsJsonObject(tablicaJ.get(k).getAsString());
+            }
+            obj2.remove(tablicaJ.get(x-1).getAsString());
+           // obj2.add(tablicaJ.get(x-1).getAsString(),wartosc);
+
+            //zbior;
+            Set<Map.Entry<String, JsonElement>> entries = obj.entrySet();
+            zbior.clear();
+            for (Map.Entry<String, JsonElement> entry: entries) {
+                zbior.put(entry.getKey(),entry.getValue());
+            }
+
+
+        }
         //-------------------------
 
 
@@ -564,7 +578,7 @@ class Session extends Thread {
 
                             jsonWiadomosc.put("response","OK");
                            output.writeUTF(gson.toJson(jsonWiadomosc));
-                            System.out.println("Sent: "+gson.toJson(jsonWiadomosc));
+                           // System.out.println("Sent: "+gson.toJson(jsonWiadomosc));
                             break;
 
                         case "set":
@@ -574,7 +588,7 @@ class Session extends Thread {
                            jsonWiadomosc = new HashMap<>();
                             jsonWiadomosc.put("response",msg);
                             output.writeUTF(gson.toJson(jsonWiadomosc));
-                            System.out.println("Sent: "+gson.toJson(jsonWiadomosc));
+                          //  System.out.println("Sent: "+gson.toJson(jsonWiadomosc));
 
                         break;
                        case "get":
@@ -590,11 +604,24 @@ class Session extends Thread {
                                jsonWiadomosc.put("response","OK");
                                jsonWiadomosc.put("value",msg);
                                output.writeUTF(gson.toJson(jsonWiadomosc));
-                               System.out.println("Sent: "+gson.toJson(jsonWiadomosc));
+                             //  System.out.println("Sent: "+gson.toJson(jsonWiadomosc));
                            }
 
 
                             break;
+
+                        case "delete":
+                            Main.jwMain=jw;
+                            Main.baza.deleteByIdZbior(jw.obiektJson);
+                            msg="OK";
+                            jsonWiadomosc = new HashMap<>();
+                            jsonWiadomosc.put("response",msg);
+                            output.writeUTF(gson.toJson(jsonWiadomosc));
+
+
+
+
+                           break;
 
                     }
                 }
@@ -614,7 +641,7 @@ class Session extends Thread {
 
                 output.writeUTF(gson.toJson(jsonWiadomosc));
 
-                System.out.println("Sent end: "+gson.toJson(jsonWiadomosc));
+                System.out.println("Sent: "+gson.toJson(jsonWiadomosc));
 
             }
             socket.close();

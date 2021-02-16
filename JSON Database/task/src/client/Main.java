@@ -195,35 +195,10 @@ public class Main {
             }
 
 
-           // String msg2= main.type+" "+main.indeks+" "+main.wiadomosc;
 
-            //gson.toJson(jsonWiadomosc);
-
-            //output.writeUTF(msg); // sending message to the server
-
-            //output.writeUTF(gson.toJson(jsonWiadomosc));
-            //System.out.println("--1--");
-           // System.out.println(gson.toJson(jsonWiadomosc));
-           // System.out.println("--2--");
-            //System.out.println(s);
-           // System.out.println("--3--");
-
-            //System.out.println(obj);
-           // System.out.println("--4--");
-           // output.writeUTF(gson.toJson(s));
-
-
-
-
-            //System.out.println("Sent: Give me a record # "+msg);
-            //System.out.println("Sent: "+msg);
-           // System.out.println("Sent: "+ str);
-           // System.out.println("Sent: "+ s);
-
-            
             String receivedMsg = input.readUTF(); // response message
 
-            //System.out.println("Received: A record # " + receivedMsg+ " was sent!");
+
             System.out.println("Received: " + receivedMsg);
 
         } catch (IOException e) {

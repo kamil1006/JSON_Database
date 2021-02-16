@@ -373,24 +373,36 @@ files:
 - name: getFile5.json
   visible: true
   learner_created: true
+- name: src/client/data/setFile.json
+  visible: true
+  learner_created: true
+- name: updateFile.json
+  visible: true
+  learner_created: true
+- name: getFile.json
+  visible: true
+  learner_created: true
+- name: deleteFile.json
+  visible: true
+  learner_created: true
+- name: secondGetFile.json
+  visible: true
+  learner_created: true
+- name: src/client/data/getFile.json
+  visible: true
+  learner_created: true
+- name: src/client/data/secondGetFile.json
+  visible: true
+  learner_created: true
+- name: src/client/data/updateFile.json
+  visible: true
+  learner_created: true
+- name: src/client/data/deleteFile.json
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/65/stages/353/implement#comment
-status: Failed
+status: Solved
 feedback:
-  message: |-
-    Wrong answer in test #3
-
-    Can&#39;t find request JSON object in the output.
-    It should contain &#39;type&#39; key
-
-    Please find below the output of your program during this failed test.
-
-    ---
-
-    Arguments for Main: -t set -k 1 -v &quot;Hello world!&quot;
-
-    Server started!
-    Client started!
-    Sent: set 1 Hello world!
-    Received: {&quot;response&quot;:&quot;OK&quot;}
-  time: Sat, 06 Feb 2021 09:33:49 UTC
+  message: Congratulations!
+  time: Tue, 16 Feb 2021 18:17:24 UTC
 record: -1
